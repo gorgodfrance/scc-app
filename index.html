@@ -54,20 +54,23 @@
         .msg.user { align-self: flex-end; background: rgba(0, 255, 65, 0.1); border: 1px solid var(--text-dim); color: #fff; }
         .msg.admin { align-self: flex-start; background: var(--header-bg); border: 1px solid #333; color: var(--text-color); }
         .msg img { max-width: 100%; border-radius: 4px; margin-top: 5px; display: block; }
-        
+        .msg audio { width: 100%; margin-top: 5px; outline: none; }
+
         .chat-action-area { padding: 10px; background: var(--header-bg); border-top: 1px solid var(--text-dim); display: flex; flex-direction: column; gap: 10px; }
         .chat-input-row { display: flex; gap: 10px; align-items: center; }
-        .chat-input-row input { flex-grow: 1; background: #000; border: 1px solid var(--text-dim); color: #fff; padding: 10px; font-family: inherit; outline: none; }
+        .chat-input-row input[type="text"] { flex-grow: 1; background: #000; border: 1px solid var(--text-dim); color: #fff; padding: 10px; font-family: inherit; outline: none; }
         .chat-input-row button { width: auto; margin: 0; padding: 10px 15px; font-size: 13px; }
-        .btn-attach { background: transparent; border: 1px solid var(--text-dim); color: var(--text-color); padding: 10px 15px; font-size: 16px; cursor: pointer; transition: 0.2s; }
-        .btn-attach:hover { border-color: var(--text-color); background: rgba(0,255,65,0.1); }
+        .btn-icon { background: transparent; border: 1px solid var(--text-dim); color: var(--text-color); padding: 10px 15px; font-size: 16px; cursor: pointer; transition: 0.2s; margin: 0; }
+        .btn-icon:hover { border-color: var(--text-color); background: rgba(0,255,65,0.1); }
+        .btn-recording { background: #ff3333 !important; color: #fff !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
         .chat-controls { display: flex; gap: 10px; }
         .chat-controls button { flex: 1; padding: 10px; font-size: 12px; margin: 0; }
         .btn-close-chat { background: transparent; border: 1px solid var(--text-color); color: var(--text-color); }
         .btn-close-chat:hover { background: var(--text-color); color: var(--bg-color); }
         .btn-end-chat { background: transparent; border: 1px solid #ff3333; color: #ff3333; }
         .btn-end-chat:hover { background: #ff3333; color: #fff; box-shadow: 0 0 10px #ff3333; }
-        
         #file-input { display: none; }
     </style>
 </head>
@@ -115,11 +118,12 @@
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         
-        <div class="chat-action-area">
+        <div class="chat-action-area" id="chat-controls-area">
             <div class="chat-input-row">
-                <!-- Кнопка скрытого выбора файла -->
                 <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
-                <button class="btn-attach" onclick="document.getElementById('file-input').click()">📎</button>
+                <button class="btn-icon" onclick="document.getElementById('file-input').click()" title="Прикрепить фото">📎</button>
+                
+                <button class="btn-icon" id="mic-btn" onclick="toggleVoiceRecord()" title="Записать голосовое">🎤</button>
                 
                 <input type="text" id="chat-input" placeholder="Введите сообщение..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
                 <button onclick="sendChatMessage()">➤</button>
@@ -128,6 +132,11 @@
                 <button class="btn-close-chat" onclick="closeChat()">Свернуть чат</button>
                 <button class="btn-end-chat" onclick="endChat()">Завершить обращение</button>
             </div>
+        </div>
+        
+        <div class="chat-action-area" id="closed-area" style="display: none; text-align: center; padding: 20px;">
+            <p style="color: #ff3333; margin-bottom: 15px;">Обращение закрыто.</p>
+            <button class="btn-close-chat" onclick="showTopics()" style="width: 100%;">Создать новое обращение</button>
         </div>
     </div>
 
@@ -141,6 +150,9 @@
         let currentServiceTitle = "";
         let currentServicePrice = 0;
         let chatInterval;
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
 
         const services = [
             { id: "audit", title: "AUDIT_IB", price: 50000, img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800", full: "Глубокий аудит инфраструктуры." },
@@ -186,6 +198,7 @@
         }
 
         function showTopics() {
+            document.getElementById('chat-screen').classList.remove('active');
             document.getElementById('catalog-screen').classList.remove('active');
             document.getElementById('detail-screen').classList.remove('active');
             document.getElementById('topic-screen').style.display = 'block';
@@ -203,6 +216,9 @@
 
         function openChat(topic = null) {
             document.getElementById('chat-screen').classList.add('active');
+            document.getElementById('chat-controls-area').style.display = 'flex';
+            document.getElementById('closed-area').style.display = 'none';
+            
             const container = document.getElementById('chat-messages');
             container.innerHTML = ''; 
             
@@ -215,22 +231,7 @@
             const userId = tg.initDataUnsafe?.user?.id;
             if (!userId) return;
             const text = `[Тема обращения: ${topic}]`;
-            
-            const container = document.getElementById('chat-messages');
-            const tempMsg = document.createElement('div');
-            tempMsg.className = 'msg user';
-            tempMsg.innerText = text;
-            container.appendChild(tempMsg);
-            container.scrollTop = container.scrollHeight;
-
-            try {
-                await fetch(`${API_URL}/api/send`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, text: text })
-                });
-                loadMessages();
-            } catch (e) { console.error(e); }
+            await sendMessageToServer(userId, text);
         }
 
         function closeChat() {
@@ -250,16 +251,31 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ user_id: userId })
                     });
-                    document.getElementById('chat-messages').innerHTML = '';
-                    closeChat();
+                    showClosedState();
                 } catch (e) { console.error(e); }
             }
+        }
+
+        function showClosedState() {
+            clearInterval(chatInterval);
+            document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('chat-controls-area').style.display = 'none';
+            document.getElementById('closed-area').style.display = 'block';
         }
 
         async function loadMessages() {
             try {
                 const userId = tg.initDataUnsafe?.user?.id;
                 if (!userId) return;
+
+                // Проверяем статус заявки (открыта/закрыта)
+                const statusRes = await fetch(`${API_URL}/api/status?user_id=${userId}`);
+                const statusData = await statusRes.json();
+                
+                if (statusData.status === 'closed') {
+                    showClosedState();
+                    return;
+                }
 
                 const response = await fetch(`${API_URL}/api/messages?user_id=${userId}`);
                 const messages = await response.json();
@@ -276,11 +292,16 @@
                         const div = document.createElement('div');
                         div.className = `msg ${m.is_admin ? 'admin' : 'user'}`;
                         
-                        // Если это картинка (Base64)
+                        // Обработка разных типов сообщений
                         if (m.text.startsWith("data:image")) {
                             const img = document.createElement('img');
                             img.src = m.text;
                             div.appendChild(img);
+                        } else if (m.text.startsWith("data:audio")) {
+                            const audio = document.createElement('audio');
+                            audio.controls = true;
+                            audio.src = m.text;
+                            div.appendChild(audio);
                         } else {
                             div.innerText = m.text;
                         }
@@ -297,11 +318,22 @@
             const userId = tg.initDataUnsafe?.user?.id;
             if (!text || !userId) return;
             input.value = "";
+            await sendMessageToServer(userId, text);
+        }
 
+        async function sendMessageToServer(userId, text) {
             const container = document.getElementById('chat-messages');
             const tempMsg = document.createElement('div');
             tempMsg.className = 'msg user';
-            tempMsg.innerText = text;
+            
+            if (text.startsWith("data:image")) {
+                const img = document.createElement('img'); img.src = text; tempMsg.appendChild(img);
+            } else if (text.startsWith("data:audio")) {
+                const audio = document.createElement('audio'); audio.controls = true; audio.src = text; tempMsg.appendChild(audio);
+            } else {
+                tempMsg.innerText = text;
+            }
+            
             container.appendChild(tempMsg);
             container.scrollTop = container.scrollHeight;
 
@@ -315,7 +347,7 @@
             } catch (e) { console.error(e); }
         }
 
-        // === НОВОЕ: ОТПРАВКА ФОТО ===
+        // === ОТПРАВКА ФОТО ===
         function handleImageUpload(event) {
             const file = event.target.files[0];
             const userId = tg.initDataUnsafe?.user?.id;
@@ -323,29 +355,48 @@
 
             const reader = new FileReader();
             reader.onload = async function(e) {
-                const base64Image = e.target.result;
-                
-                // Мгновенно показываем клиенту
-                const container = document.getElementById('chat-messages');
-                const tempMsg = document.createElement('div');
-                tempMsg.className = 'msg user';
-                const img = document.createElement('img');
-                img.src = base64Image;
-                tempMsg.appendChild(img);
-                container.appendChild(tempMsg);
-                container.scrollTop = container.scrollHeight;
-
-                try {
-                    await fetch(`${API_URL}/api/send`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ user_id: userId, text: base64Image })
-                    });
-                    loadMessages();
-                } catch (err) { console.error(err); }
+                await sendMessageToServer(userId, e.target.result);
             };
             reader.readAsDataURL(file);
-            event.target.value = ''; // Очищаем инпут
+            event.target.value = ''; 
+        }
+
+        // === ЗАПИСЬ ГОЛОСА ===
+        async function toggleVoiceRecord() {
+            const micBtn = document.getElementById('mic-btn');
+            const userId = tg.initDataUnsafe?.user?.id;
+            if (!userId) return;
+
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.onload = async function(e) {
+                            await sendMessageToServer(userId, e.target.result);
+                        };
+                        reader.readAsDataURL(audioBlob);
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    micBtn.classList.add('btn-recording');
+                } catch (err) {
+                    alert("Не удалось получить доступ к микрофону. Проверьте разрешения.");
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                micBtn.classList.remove('btn-recording');
+            }
         }
     </script>
 </body>
