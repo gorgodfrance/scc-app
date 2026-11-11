@@ -80,7 +80,6 @@
         .chat-input-area input { flex-grow: 1; background: #000; border: 1px solid var(--text-dim); color: #fff; padding: 10px; font-family: inherit; outline: none; }
         .chat-input-area button { width: auto; margin: 0; padding: 10px 15px; font-size: 13px; }
 
-        /* Кнопки в шапке чата */
         .btn-close-chat { background: transparent; border: 1px solid var(--text-color); color: var(--text-color); padding: 5px 10px; font-size: 12px; margin: 0; width: auto; }
         .btn-close-chat:hover { background: var(--text-color); color: var(--bg-color); }
         
@@ -139,8 +138,9 @@
         tg.expand();
         tg.setHeaderColor('#050505');
         
-        // Если тестируешь с телефона, замени localhost на IP компьютера (например, 192.168.1.5)
+        // Для теста на ПК
         const API_URL = 'http://localhost:8080'; 
+        // Если тестируешь с телефона, замени localhost на IP компа (например, 192.168.1.5)
 
         let currentServiceId = "";
         let currentServiceTitle = "";
@@ -197,7 +197,7 @@
             document.getElementById('chat-screen').classList.add('active');
             
             const container = document.getElementById('chat-messages');
-            container.innerHTML = ''; // Очищаем экран перед загрузкой
+            container.innerHTML = ''; 
             
             loadMessages();
             chatInterval = setInterval(loadMessages, 2000); 
@@ -221,7 +221,7 @@
                         body: JSON.stringify({ user_id: userId })
                     });
                     document.getElementById('chat-messages').innerHTML = '';
-                    openChat(); // Перезапускаем чат
+                    openChat(); 
                 } catch (e) {
                     console.error("Ошибка завершения", e);
                 }
@@ -239,7 +239,6 @@
                 const container = document.getElementById('chat-messages');
                 container.innerHTML = '';
 
-                // ПРИВЕТСТВЕННОЕ СООБЩЕНИЕ (если история пуста)
                 if (messages.length === 0) {
                     const welcome = document.createElement('div');
                     welcome.className = 'msg admin';
@@ -267,12 +266,23 @@
             if (!text || !userId) return;
             input.value = "";
 
+            // 1. Мгновенно показываем сообщение клиента (чтобы не ждать 2 секунды)
+            const container = document.getElementById('chat-messages');
+            const tempMsg = document.createElement('div');
+            tempMsg.className = 'msg user';
+            tempMsg.innerText = text;
+            container.appendChild(tempMsg);
+            container.scrollTop = container.scrollHeight;
+
             try {
+                // 2. Отправляем на сервер
                 await fetch(`${API_URL}/api/send`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, text: text })
                 });
+                
+                // 3. Сразу подгружаем новые сообщения (включая автоответ)
                 loadMessages();
             } catch (e) {
                 console.error("Ошибка отправки", e);
