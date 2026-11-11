@@ -232,7 +232,6 @@
                 img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
                 full: "Проверка вашей компании на соответствие Федеральному закону №152 «О персональных данных». Поможем избежать штрафов и подготовить документы к проверкам Роскомнадзора."
             },
-            // --- НОВЫЕ 3 УСЛУГИ ---
             { 
                 id: "redteam", title: "RED_TEAM", price: 200000,
                 img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800&auto=format&fit=crop",
@@ -298,13 +297,15 @@
                 title: title,
                 price: price
             }));
+            tg.close(); // <--- ЗАКРЫВАЕМ ОКНО ДЛЯ ОТПРАВКИ ДАННЫХ
         }
 
-        // Связаться с менеджером (Передает команду боту включить режим чата)
+        // Связаться с менеджером
         function contactManager() {
             tg.sendData(JSON.stringify({
                 action: "support"
             }));
+            tg.close(); // <--- ЗАКРЫВАЕМ ОКНО ДЛЯ ОТПРАВКИ ДАННЫХ
         }
     </script>
 </body>
