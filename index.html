@@ -54,7 +54,11 @@
         .msg.user { align-self: flex-end; background: rgba(0, 255, 65, 0.1); border: 1px solid var(--text-dim); color: #fff; }
         .msg.admin { align-self: flex-start; background: var(--header-bg); border: 1px solid #333; color: var(--text-color); }
         .msg img { max-width: 100%; border-radius: 4px; margin-top: 5px; display: block; }
-        .msg audio { width: 100%; margin-top: 5px; outline: none; }
+        
+        /* Исправленный стиль для аудио */
+        .msg audio { width: 100%; margin-top: 5px; display: block; height: 40px; outline: none; border-radius: 4px; }
+        .msg audio::-webkit-media-controls-panel { background-color: var(--header-bg); }
+        .msg audio::-webkit-media-controls-play-button { background-color: var(--text-color); border-radius: 50%; }
 
         .chat-action-area { padding: 10px; background: var(--header-bg); border-top: 1px solid var(--text-dim); display: flex; flex-direction: column; gap: 10px; }
         .chat-input-row { display: flex; gap: 10px; align-items: center; }
@@ -209,7 +213,6 @@
             document.getElementById('catalog-screen').classList.add('active');
         }
 
-        // ВАЖНО: принудительно открываем тикет на сервере перед входом
         async function selectTopic(topic) {
             document.getElementById('topic-screen').style.display = 'none';
             const userId = tg.initDataUnsafe?.user?.id;
