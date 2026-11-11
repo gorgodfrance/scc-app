@@ -28,28 +28,21 @@
             height: 100vh;
         }
 
-        /* --- ШАПКА --- */
         .company-header {
             background-color: var(--header-bg); border-bottom: 1px solid var(--text-dim);
             padding: 15px 16px; display: flex; align-items: center; gap: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.8); z-index: 100;
         }
-        .company-logo {
-            width: 40px; height: 40px; background: var(--bg-color);
-            border: 1px solid var(--text-color); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-weight: bold;
-        }
+        .company-logo { width: 40px; height: 40px; background: var(--bg-color); border: 1px solid var(--text-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
         .company-info h2 { margin: 0; font-size: 16px; color: #fff; text-transform: uppercase; }
         .company-info p { margin: 2px 0 0; font-size: 10px; color: var(--text-dim); }
 
         .content { padding: 16px; flex-grow: 1; overflow-y: auto; padding-bottom: 80px; }
 
-        /* Экраны */
         .screen { display: none; height: 100%; flex-direction: column; }
         .screen.active { display: flex; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- БАННЕР И КАТАЛОГ --- */
         .hero-section { position: relative; border: 1px solid var(--text-dim); margin-bottom: 20px; }
         .hero-img { width: 100%; height: 120px; object-fit: cover; opacity: 0.6; }
         .hero-text { position: absolute; bottom: 0; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); width: 100%; box-sizing: border-box; }
@@ -64,7 +57,6 @@
         .card-title { font-size: 12px; color: #fff; }
         .card-price { font-size: 14px; font-weight: bold; color: var(--text-color); margin-top: 8px; }
 
-        /* --- ДЕТАЛИ --- */
         .back-btn { background: none; border: none; color: var(--text-dim); font-family: inherit; font-size: 14px; cursor: pointer; margin-bottom: 15px; padding: 0; }
         .detail-img { width: 100%; height: 180px; object-fit: cover; border: 1px solid var(--text-dim); }
         .detail-title { font-size: 20px; margin: 15px 0 5px; color: #fff; }
@@ -76,16 +68,9 @@
         button.support { border: 1px dashed #555; color: #fff; text-transform: none; }
         button.support:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
 
-        /* Кнопка поддержки на главной */
-        .main-support-btn {
-            display: block; text-align: center; text-decoration: none;
-            border: 1px dashed var(--text-color); color: var(--text-color);
-            padding: 15px; font-weight: 600; margin-top: 10px;
-            transition: 0.2s;
-        }
+        .main-support-btn { display: block; text-align: center; text-decoration: none; border: 1px dashed var(--text-color); color: var(--text-color); padding: 15px; font-weight: 600; margin-top: 10px; transition: 0.2s; }
         .main-support-btn:hover { background: rgba(0, 255, 65, 0.1); box-shadow: 0 0 10px var(--text-dim); }
 
-        /* --- ЧАТ --- */
         #chat-screen { background: var(--bg-color); z-index: 200; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
         .msg { max-width: 80%; padding: 10px; font-size: 13px; border-radius: 4px; word-wrap: break-word; }
@@ -104,7 +89,6 @@
     </header>
 
     <div class="content">
-        <!-- ЭКРАН 1: КАТАЛОГ -->
         <div id="catalog-screen" class="screen active">
             <div class="hero-section">
                 <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800" class="hero-img">
@@ -113,16 +97,10 @@
                     <p>Команда этичных хакеров и экспертов по кибербезопасности.</p>
                 </div>
             </div>
-            
             <div class="catalog-grid" id="services-container"></div>
-
-            <!-- КНОПКА ПОДДЕРЖКИ НА ГЛАВНОЙ -->
-            <div class="main-support-btn" onclick="openChat()">
-                💬 Связаться с техподдержкой
-            </div>
+            <div class="main-support-btn" onclick="openChat()">💬 Связаться с техподдержкой</div>
         </div>
 
-        <!-- ЭКРАН 2: ДЕТАЛИ -->
         <div id="detail-screen" class="screen">
             <button class="back-btn" onclick="showCatalog()">← Назад в каталог</button>
             <img id="d-image" class="detail-img">
@@ -133,15 +111,12 @@
             <button class="support" onclick="openChat()">💬 Чат с менеджером</button>
         </div>
 
-        <!-- ЭКРАН 3: ЧАТ -->
         <div id="chat-screen" class="screen">
             <div style="padding: 10px 16px; border-bottom: 1px solid var(--text-dim); display: flex; justify-content: space-between; align-items: center; background: var(--header-bg);">
                 <span style="color: #fff; font-size: 14px;">Чат с поддержкой</span>
                 <button style="width: auto; margin: 0; padding: 5px 10px; font-size: 12px;" onclick="closeChat()">Закрыть</button>
             </div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="msg admin">Здравствуйте! Задайте ваш вопрос, и менеджер ответит здесь.</div>
-            </div>
+            <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input-area">
                 <input type="text" id="chat-input" placeholder="Введите сообщение...">
                 <button onclick="sendChatMessage()">➤</button>
@@ -154,20 +129,24 @@
         tg.expand();
         tg.setHeaderColor('#050505');
         
+        // ВАЖНО: Замени localhost на IP своего компьютера, если запускаешь не на локалке
+        // Если у тебя есть домен/хостинг для бота, укажи его здесь.
+        const API_URL = 'http://localhost:8080'; 
+
         let currentServiceId = "";
         let currentServiceTitle = "";
         let currentServicePrice = 0;
+        let chatInterval;
 
-        // ВСЕ 8 ТОВАРОВ ВОЗВРАЩЕНЫ
         const services = [
-            { id: "audit", title: "AUDIT_IB", price: 50000, img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800", full: "Глубокий аудит инфраструктуры. Выявление уязвимостей, анализ конфигураций серверов и сетей." },
-            { id: "pentest", title: "PENTEST_WEB", price: 100000, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800", full: "Тестирование на проникновение (Black/White box). Поиск уязвимостей веб-приложений." },
-            { id: "soc", title: "SOC_MONITOR", price: 150000, img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800", full: "Подключение к нашему Security Operations Center. Мониторинг 24/7." },
-            { id: "aware", title: "EDU_PHISH", price: 30000, img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=800", full: "Обучение сотрудников основам кибергигиены. Проверка на фишинг." },
-            { id: "comply", title: "COMPLY_152FZ", price: 70000, img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800", full: "Проверка на соответствие Федеральному закону №152 «О персональных данных»." },
-            { id: "redteam", title: "RED_TEAM", price: 200000, img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800", full: "Имитация действий реальных хакеров (Red Teaming) с использованием социальной инженерии." },
-            { id: "codeaudit", title: "CODE_AUDIT", price: 80000, img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800", full: "Статический и динамический анализ исходного кода (SAST/DAST). Поиск логических ошибок." },
-            { id: "forensics", title: "FORENSICS", price: 120000, img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=800", full: "Компьютерная криминалистика. Сбор доказательств и анализ последствий взлома." }
+            { id: "audit", title: "AUDIT_IB", price: 50000, img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800", full: "Глубокий аудит инфраструктуры." },
+            { id: "pentest", title: "PENTEST_WEB", price: 100000, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800", full: "Тестирование на проникновение." },
+            { id: "soc", title: "SOC_MONITOR", price: 150000, img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800", full: "Мониторинг 24/7." },
+            { id: "aware", title: "EDU_PHISH", price: 30000, img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=800", full: "Обучение сотрудников." },
+            { id: "comply", title: "COMPLY_152FZ", price: 70000, img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800", full: "Аудит 152-ФЗ." },
+            { id: "redteam", title: "RED_TEAM", price: 200000, img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800", full: "Имитация атаки." },
+            { id: "codeaudit", title: "CODE_AUDIT", price: 80000, img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800", full: "Аудит кода." },
+            { id: "forensics", title: "FORENSICS", price: 120000, img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=800", full: "Криминалистика." }
         ];
 
         const container = document.getElementById('services-container');
@@ -184,12 +163,10 @@
             currentServiceId = service.id;
             currentServiceTitle = service.title;
             currentServicePrice = service.price;
-
             document.getElementById('d-image').src = service.img;
             document.getElementById('d-title').innerText = service.title;
             document.getElementById('d-price').innerText = new Intl.NumberFormat('ru-RU').format(service.price) + ' ₽';
             document.getElementById('d-desc').innerText = service.full;
-
             document.getElementById('catalog-screen').classList.remove('active');
             document.getElementById('detail-screen').classList.add('active');
         }
@@ -201,39 +178,68 @@
 
         function buyCurrent() {
             tg.sendData(JSON.stringify({ action: "buy", service_id: currentServiceId, title: currentServiceTitle, price: currentServicePrice }));
-            tg.close(); // Для оплаты закрываем, чтобы бот выставил счет
+            tg.close();
         }
 
-        // --- ЧАТ ---
+        // --- ЧАТ С СЕРВЕРОМ ---
         function openChat() {
             document.getElementById('catalog-screen').classList.remove('active');
             document.getElementById('detail-screen').classList.remove('active');
             document.getElementById('chat-screen').classList.add('active');
+            
+            // Запускаем цикл обновления сообщений
+            loadMessages();
+            chatInterval = setInterval(loadMessages, 2000); 
         }
 
         function closeChat() {
+            clearInterval(chatInterval); // Останавливаем цикл
             document.getElementById('chat-screen').classList.remove('active');
             document.getElementById('catalog-screen').classList.add('active');
         }
 
-        function sendChatMessage() {
+        async function loadMessages() {
+            try {
+                const userId = tg.initDataUnsafe?.user?.id;
+                if (!userId) return;
+
+                const response = await fetch(`${API_URL}/api/messages?user_id=${userId}`);
+                const messages = await response.json();
+                
+                const container = document.getElementById('chat-messages');
+                container.innerHTML = '';
+                
+                messages.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = `msg ${m.is_admin ? 'admin' : 'user'}`;
+                    div.innerText = m.text;
+                    container.appendChild(div);
+                });
+                container.scrollTop = container.scrollHeight;
+            } catch (e) {
+                console.error("Ошибка загрузки сообщений", e);
+            }
+        }
+
+        async function sendChatMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
-            if (!text) return;
+            const userId = tg.initDataUnsafe?.user?.id;
+            
+            if (!text || !userId) return;
 
-            const messagesContainer = document.getElementById('chat-messages');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'msg user';
-            userMsg.innerText = text;
-            messagesContainer.appendChild(userMsg);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            // ОТПРАВЛЯЕМ БЕЗ ЗАКРЫТИЯ ОКНА:
-            // Используем API Telegram для отправки данных без закрытия
-            tg.sendData(JSON.stringify({ action: "chat_msg", text: text }));
-            
-            // Небольшой хак: если окно не закрылось, мы просто продолжаем
             input.value = "";
+
+            try {
+                await fetch(`${API_URL}/api/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, text: text })
+                });
+                loadMessages(); // Сразу обновляем
+            } catch (e) {
+                console.error("Ошибка отправки", e);
+            }
         }
     </script>
 </body>
