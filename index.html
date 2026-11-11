@@ -28,11 +28,7 @@
             height: 100vh;
         }
 
-        .company-header {
-            background-color: var(--header-bg); border-bottom: 1px solid var(--text-dim);
-            padding: 15px 16px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8); z-index: 100;
-        }
+        .company-header { background-color: var(--header-bg); border-bottom: 1px solid var(--text-dim); padding: 15px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); z-index: 100; }
         .company-logo { width: 40px; height: 40px; background: var(--bg-color); border: 1px solid var(--text-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
         .company-info h2 { margin: 0; font-size: 16px; color: #fff; text-transform: uppercase; }
         .company-info p { margin: 2px 0 0; font-size: 10px; color: var(--text-dim); }
@@ -72,13 +68,24 @@
         .main-support-btn:hover { background: rgba(0, 255, 65, 0.1); box-shadow: 0 0 10px var(--text-dim); }
 
         #chat-screen { background: var(--bg-color); z-index: 200; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
+        .chat-header-bar { padding: 10px 16px; border-bottom: 1px solid var(--text-dim); display: flex; justify-content: space-between; align-items: center; background: var(--header-bg); }
+        .chat-header-bar span { color: #fff; font-size: 14px; }
+        
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
         .msg { max-width: 80%; padding: 10px; font-size: 13px; border-radius: 4px; word-wrap: break-word; }
         .msg.user { align-self: flex-end; background: rgba(0, 255, 65, 0.1); border: 1px solid var(--text-dim); color: #fff; }
         .msg.admin { align-self: flex-start; background: var(--header-bg); border: 1px solid #333; color: var(--text-color); }
+        
         .chat-input-area { padding: 10px; background: var(--header-bg); border-top: 1px solid var(--text-dim); display: flex; gap: 10px; }
         .chat-input-area input { flex-grow: 1; background: #000; border: 1px solid var(--text-dim); color: #fff; padding: 10px; font-family: inherit; outline: none; }
         .chat-input-area button { width: auto; margin: 0; padding: 10px 15px; font-size: 13px; }
+
+        /* Кнопки в шапке чата */
+        .btn-close-chat { background: transparent; border: 1px solid var(--text-color); color: var(--text-color); padding: 5px 10px; font-size: 12px; margin: 0; width: auto; }
+        .btn-close-chat:hover { background: var(--text-color); color: var(--bg-color); }
+        
+        .btn-end-chat { background: transparent; border: 1px solid #ff3333; color: #ff3333; padding: 5px 10px; font-size: 12px; margin: 0; width: auto; }
+        .btn-end-chat:hover { background: #ff3333; color: #fff; box-shadow: 0 0 10px #ff3333; }
     </style>
 </head>
 <body>
@@ -112,9 +119,12 @@
         </div>
 
         <div id="chat-screen" class="screen">
-            <div style="padding: 10px 16px; border-bottom: 1px solid var(--text-dim); display: flex; justify-content: space-between; align-items: center; background: var(--header-bg);">
-                <span style="color: #fff; font-size: 14px;">Чат с поддержкой</span>
-                <button style="width: auto; margin: 0; padding: 5px 10px; font-size: 12px;" onclick="closeChat()">Закрыть</button>
+            <div class="chat-header-bar">
+                <span>Чат с поддержкой</span>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-end-chat" onclick="endChat()">Завершить</button>
+                    <button class="btn-close-chat" onclick="closeChat()">Закрыть</button>
+                </div>
             </div>
             <div class="chat-messages" id="chat-messages"></div>
             <div class="chat-input-area">
@@ -129,8 +139,7 @@
         tg.expand();
         tg.setHeaderColor('#050505');
         
-        // ВАЖНО: Замени localhost на IP своего компьютера, если запускаешь не на локалке
-        // Если у тебя есть домен/хостинг для бота, укажи его здесь.
+        // Если тестируешь с телефона, замени localhost на IP компьютера (например, 192.168.1.5)
         const API_URL = 'http://localhost:8080'; 
 
         let currentServiceId = "";
@@ -181,21 +190,42 @@
             tg.close();
         }
 
-        // --- ЧАТ С СЕРВЕРОМ ---
+        // --- ЧАТ ---
         function openChat() {
             document.getElementById('catalog-screen').classList.remove('active');
             document.getElementById('detail-screen').classList.remove('active');
             document.getElementById('chat-screen').classList.add('active');
             
-            // Запускаем цикл обновления сообщений
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = ''; // Очищаем экран перед загрузкой
+            
             loadMessages();
             chatInterval = setInterval(loadMessages, 2000); 
         }
 
         function closeChat() {
-            clearInterval(chatInterval); // Останавливаем цикл
+            clearInterval(chatInterval);
             document.getElementById('chat-screen').classList.remove('active');
             document.getElementById('catalog-screen').classList.add('active');
+        }
+
+        async function endChat() {
+            const userId = tg.initDataUnsafe?.user?.id;
+            if (!userId) return;
+
+            if(confirm("Вы уверены, что хотите завершить диалог? История будет очищена.")) {
+                try {
+                    await fetch(`${API_URL}/api/end`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: userId })
+                    });
+                    document.getElementById('chat-messages').innerHTML = '';
+                    openChat(); // Перезапускаем чат
+                } catch (e) {
+                    console.error("Ошибка завершения", e);
+                }
+            }
         }
 
         async function loadMessages() {
@@ -208,13 +238,21 @@
                 
                 const container = document.getElementById('chat-messages');
                 container.innerHTML = '';
-                
-                messages.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = `msg ${m.is_admin ? 'admin' : 'user'}`;
-                    div.innerText = m.text;
-                    container.appendChild(div);
-                });
+
+                // ПРИВЕТСТВЕННОЕ СООБЩЕНИЕ (если история пуста)
+                if (messages.length === 0) {
+                    const welcome = document.createElement('div');
+                    welcome.className = 'msg admin';
+                    welcome.innerText = "Здравствуйте! Вы подключились к защищенной линии поддержки SCC. Напишите ваш вопрос, и менеджер ответит здесь.";
+                    container.appendChild(welcome);
+                } else {
+                    messages.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = `msg ${m.is_admin ? 'admin' : 'user'}`;
+                        div.innerText = m.text;
+                        container.appendChild(div);
+                    });
+                }
                 container.scrollTop = container.scrollHeight;
             } catch (e) {
                 console.error("Ошибка загрузки сообщений", e);
@@ -227,7 +265,6 @@
             const userId = tg.initDataUnsafe?.user?.id;
             
             if (!text || !userId) return;
-
             input.value = "";
 
             try {
@@ -236,7 +273,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, text: text })
                 });
-                loadMessages(); // Сразу обновляем
+                loadMessages();
             } catch (e) {
                 console.error("Ошибка отправки", e);
             }
