@@ -21,181 +21,116 @@
             font-family: 'Fira Code', monospace;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            background-image: 
-                linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+            margin: 0; padding: 0;
+            background-image: linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
             background-size: 20px 20px;
-        }
-
-        /* --- ШАПКА КОМПАНИИ --- */
-        .company-header {
-            background-color: var(--header-bg);
-            border-bottom: 1px solid var(--text-dim);
-            padding: 15px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .company-logo {
-            width: 40px; height: 40px;
-            background: var(--bg-color);
-            border: 1px solid var(--text-color);
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-weight: bold; font-size: 16px;
-            box-shadow: 0 0 10px rgba(0,255,65,0.3);
-        }
-        .company-info h2 { margin: 0; font-size: 16px; color: #fff; text-shadow: 0 0 5px var(--text-color); text-transform: uppercase; }
-        .company-info p { margin: 2px 0 0; font-size: 10px; color: var(--text-dim); }
-
-        .content { padding: 16px; }
-
-        /* Экраны */
-        .screen { display: none; }
-        .screen.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- БАННЕР НА ГЛАВНОЙ --- */
-        .hero-section {
-            position: relative;
-            border: 1px solid var(--text-dim);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: 0 0 15px rgba(0,255,65,0.1);
-        }
-        .hero-img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            opacity: 0.6;
-        }
-        .hero-text {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 15px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-        }
-        .hero-text h3 { margin: 0; font-size: 16px; color: var(--text-color); text-transform: uppercase; }
-        .hero-text p { margin: 5px 0 0; font-size: 11px; color: #ccc; line-height: 1.4; }
-
-        .section-title { 
-            text-align: center; margin-bottom: 15px; 
-            font-size: 14px; color: var(--text-dim);
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        /* --- СЕТКА КАТАЛОГА --- */
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--text-dim);
-            border-top: 3px solid var(--text-color);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
+            height: 100vh;
         }
-        .card:hover { box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); border-color: var(--text-color); transform: scale(1.02); }
-        
-        .card-img { width: 100%; height: 80px; object-fit: cover; opacity: 0.7; border-bottom: 1px solid var(--text-dim); transition: 0.3s; }
-        .card:hover .card-img { opacity: 1; }
 
-        .card-content { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
-        .card-title { font-weight: 600; font-size: 12px; color: #ffffff; text-shadow: 0 0 5px var(--text-color); word-wrap: break-word; }
-        .card-price { font-size: 14px; font-weight: bold; color: var(--text-color); margin-top: auto; padding-top: 8px; }
-
-        /* --- ЭКРАН ДЕТАЛЕЙ --- */
-        .back-btn {
-            background: transparent; border: none; color: var(--text-dim); 
-            font-family: inherit; font-size: 14px; cursor: pointer; 
-            padding: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 5px;
+        /* --- ШАПКА --- */
+        .company-header {
+            background-color: var(--header-bg); border-bottom: 1px solid var(--text-dim);
+            padding: 15px 16px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8); z-index: 100;
         }
-        .back-btn:hover { color: var(--text-color); text-shadow: 0 0 5px var(--text-color); }
+        .company-logo {
+            width: 40px; height: 40px; background: var(--bg-color);
+            border: 1px solid var(--text-color); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-weight: bold;
+        }
+        .company-info h2 { margin: 0; font-size: 16px; color: #fff; text-transform: uppercase; }
+        .company-info p { margin: 2px 0 0; font-size: 10px; color: var(--text-dim); }
 
-        .detail-img { width: 100%; height: 180px; object-fit: cover; border: 1px solid var(--text-dim); box-shadow: 0 0 10px rgba(0,255,65,0.1); }
-        .detail-title { font-size: 20px; margin: 15px 0 5px; color: #fff; text-shadow: 0 0 10px var(--text-color); }
+        .content { padding: 16px; flex-grow: 1; overflow-y: auto; }
+
+        /* Экраны */
+        .screen { display: none; height: 100%; flex-direction: column; }
+        .screen.active { display: flex; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- БАННЕР И КАТАЛОГ --- */
+        .hero-section { position: relative; border: 1px solid var(--text-dim); margin-bottom: 20px; }
+        .hero-img { width: 100%; height: 150px; object-fit: cover; opacity: 0.6; }
+        .hero-text { position: absolute; bottom: 0; padding: 15px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); width: 100%; box-sizing: border-box; }
+        .hero-text h3 { margin: 0; font-size: 16px; color: var(--text-color); }
+        .hero-text p { margin: 5px 0 0; font-size: 11px; color: #ccc; }
+
+        .catalog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: var(--card-bg); border: 1px solid var(--text-dim); border-top: 3px solid var(--text-color); cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; }
+        .card:hover { box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); }
+        .card-img { width: 100%; height: 80px; object-fit: cover; opacity: 0.7; }
+        .card-content { padding: 10px; }
+        .card-title { font-size: 12px; color: #fff; }
+        .card-price { font-size: 14px; font-weight: bold; color: var(--text-color); margin-top: 8px; }
+
+        /* --- ДЕТАЛИ --- */
+        .back-btn { background: none; border: none; color: var(--text-dim); font-family: inherit; font-size: 14px; cursor: pointer; margin-bottom: 15px; padding: 0; }
+        .detail-img { width: 100%; height: 180px; object-fit: cover; border: 1px solid var(--text-dim); }
+        .detail-title { font-size: 20px; margin: 15px 0 5px; color: #fff; }
         .detail-price { font-size: 24px; color: var(--text-color); margin-bottom: 15px; font-weight: bold; }
         .detail-desc { font-size: 13px; color: #ccc; line-height: 1.5; margin-bottom: 20px; }
 
-        /* Кнопки */
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        
-        button.buy {
-            background-color: transparent; color: var(--text-color);
-            border: 1px solid var(--text-color); padding: 14px;
-            font-size: 15px; font-family: inherit; font-weight: 600;
-            cursor: pointer; width: 100%; text-transform: uppercase;
-            box-shadow: inset 0 0 0 0 var(--text-color); transition: 0.2s;
-        }
-        button.buy:hover, button.buy:active {
-            background-color: var(--text-color); color: var(--bg-color);
-            box-shadow: 0 0 15px var(--text-color);
-        }
-
-        button.support {
-            background-color: transparent; color: #fff;
-            border: 1px dashed #555; padding: 14px;
-            font-size: 14px; font-family: inherit;
-            cursor: pointer; width: 100%; transition: 0.2s;
-        }
+        button { background: transparent; color: var(--text-color); border: 1px solid var(--text-color); padding: 14px; font-size: 15px; font-family: inherit; font-weight: 600; cursor: pointer; width: 100%; text-transform: uppercase; transition: 0.2s; margin-bottom: 10px; }
+        button:hover { background: var(--text-color); color: var(--bg-color); box-shadow: 0 0 15px var(--text-color); }
+        button.support { border: 1px dashed #555; color: #fff; text-transform: none; }
         button.support:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
+
+        /* --- ЧАТ --- */
+        #chat-screen { background: var(--bg-color); z-index: 200; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 80%; padding: 10px; font-size: 13px; border-radius: 4px; word-wrap: break-word; }
+        .msg.user { align-self: flex-end; background: rgba(0, 255, 65, 0.1); border: 1px solid var(--text-dim); color: #fff; }
+        .msg.admin { align-self: flex-start; background: var(--header-bg); border: 1px solid #333; color: var(--text-color); }
+        .chat-input-area { padding: 10px; background: var(--header-bg); border-top: 1px solid var(--text-dim); display: flex; gap: 10px; }
+        .chat-input-area input { flex-grow: 1; background: #000; border: 1px solid var(--text-dim); color: #fff; padding: 10px; font-family: inherit; outline: none; }
+        .chat-input-area button { width: auto; margin: 0; padding: 10px 15px; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <!-- ШАПКА -->
     <header class="company-header">
         <div class="company-logo">SCC</div>
-        <div class="company-info">
-            <h2>Security Cyber Center</h2>
-            <p>Защита вашего бизнеса</p>
-        </div>
+        <div class="company-info"><h2>SCC Terminal</h2><p>Secure Line</p></div>
     </header>
 
     <div class="content">
-        <!-- ЭКРАН 1: ГЛАВНАЯ -->
+        <!-- ЭКРАН 1: КАТАЛОГ -->
         <div id="catalog-screen" class="screen active">
-            
-            <!-- БАННЕР КОМПАНИИ -->
             <div class="hero-section">
-                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" class="hero-img" alt="SCC">
+                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" class="hero-img">
                 <div class="hero-text">
                     <h3>О компании</h3>
-                    <p>SCC — это команда этичных хакеров и экспертов по кибербезопасности. Мы защищаем бизнес от цифровых угроз, проводим аудиты, тестируем на проникновение и обучаем сотрудников.</p>
+                    <p>Команда этичных хакеров и экспертов по кибербезопасности.</p>
                 </div>
             </div>
-
-            <div class="section-title">// Выберите протокол //</div>
-            <div class="catalog-grid" id="services-container">
-                <!-- Карточки генерируются JS -->
-            </div>
+            <div class="catalog-grid" id="services-container"></div>
         </div>
 
-        <!-- ЭКРАН 2: ДЕТАЛИ УСЛУГИ -->
+        <!-- ЭКРАН 2: ДЕТАЛИ -->
         <div id="detail-screen" class="screen">
-            <button class="back-btn" onclick="showCatalog()">← Вернуться в каталог</button>
-            <img id="d-image" class="detail-img" src="" alt="Услуга">
+            <button class="back-btn" onclick="showCatalog()">← Назад в каталог</button>
+            <img id="d-image" class="detail-img">
             <h2 id="d-title" class="detail-title"></h2>
             <div id="d-price" class="detail-price"></div>
             <div id="d-desc" class="detail-desc"></div>
-            
-            <div class="btn-group">
-                <button id="d-buy-btn" class="buy">Выполнить (Оплатить)</button>
-                <button class="support" onclick="contactManager()">💬 Задать вопрос менеджеру</button>
+            <button id="d-buy-btn" onclick="buyCurrent()">Выполнить (Оплатить)</button>
+            <button class="support" onclick="openChat()">💬 Чат с менеджером</button>
+        </div>
+
+        <!-- ЭКРАН 3: ЧАТ -->
+        <div id="chat-screen" class="screen">
+            <div style="padding: 10px 16px; border-bottom: 1px solid var(--text-dim); display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #fff; font-size: 14px;">Чат с поддержкой</span>
+                <button style="width: auto; margin: 0; padding: 5px 10px; font-size: 12px;" onclick="closeChat()">Закрыть</button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="msg admin">Здравствуйте! Задайте ваш вопрос, и менеджер ответит здесь.</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Введите сообщение...">
+                <button onclick="sendChatMessage()">➤</button>
             </div>
         </div>
     </div>
@@ -204,84 +139,40 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.setHeaderColor('#050505');
+        
+        let currentServiceId = "";
+        let currentServiceTitle = "";
+        let currentServicePrice = 0;
 
-        // 8 услуг
         const services = [
-            { 
-                id: "audit", title: "AUDIT_IB", price: 50000,
-                img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
-                full: "Глубокий аудит вашей инфраструктуры. Выявление уязвимостей, анализ конфигураций серверов и сетей. Вы получаете подробный отчет с оценкой рисков и рекомендациями по устранению."
-            },
-            { 
-                id: "pentest", title: "PENTEST_WEB", price: 100000,
-                img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop",
-                full: "Тестирование на проникновение (Black/White box). Наши этичные хакеры попытаются взломать ваш сайт или приложение. В конце вы получите отчет со всеми найденными дырами и PoC-эксплойтами."
-            },
-            { 
-                id: "soc", title: "SOC_MONITOR", price: 150000,
-                img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
-                full: "Подключение к нашему Security Operations Center. Круглосуточный мониторинг ваших систем, обнаружение вторжений в реальном времени и мгновенное реагирование на инциденты."
-            },
-            { 
-                id: "aware", title: "EDU_PHISH", price: 30000,
-                img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=800&auto=format&fit=crop",
-                full: "Обучение сотрудников основам кибергигиены. Мы проведем легальную рассылку фишинговых писем, чтобы проверить бдительность, а затем обучим персонал, как не попадаться на уловки хакеров."
-            },
-            { 
-                id: "comply", title: "COMPLY_152FZ", price: 70000,
-                img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
-                full: "Проверка вашей компании на соответствие Федеральному закону №152 «О персональных данных». Поможем избежать штрафов и подготовить документы к проверкам Роскомнадзора."
-            },
-            { 
-                id: "redteam", title: "RED_TEAM", price: 200000,
-                img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800&auto=format&fit=crop",
-                full: "Имитация действий реальных хакеров (Red Teaming). Мы используем продвинутые методы социальной инженерии и кибератаки, чтобы проверить, как ваши системы и персонал противостоят целеустремленному противнику."
-            },
-            { 
-                id: "codeaudit", title: "CODE_AUDIT", price: 80000,
-                img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
-                full: "Статический и динамический анализ исходного кода (SAST/DAST). Поиск уязвимостей на этапе разработки (SQL-инъекции, XSS, логические ошибки). Идеально для стартапов и продуктовых команд."
-            },
-            { 
-                id: "forensics", title: "CYBER_FORENSICS", price: 120000,
-                img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=800&auto=format&fit=crop",
-                full: "Компьютерная криминалистика. Если взлом уже произошел, мы оперативно соберем цифровые доказательства, выясним, как злоумышленник попал в систему, и поможем минимизировать ущерб."
-            }
+            { id: "audit", title: "AUDIT_IB", price: 50000, img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800", full: "Глубокий аудит инфраструктуры." },
+            { id: "pentest", title: "PENTEST_WEB", price: 100000, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800", full: "Тестирование на проникновение." },
+            { id: "soc", title: "SOC_MONITOR", price: 150000, img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800", full: "Мониторинг безопасности 24/7." }
         ];
 
-        const catalogContainer = document.getElementById('services-container');
-
-        // Рендер карточек
-        services.forEach(service => {
-            const formattedPrice = new Intl.NumberFormat('ru-RU').format(service.price) + ' ₽';
+        // Рендер каталога
+        const container = document.getElementById('services-container');
+        services.forEach(s => {
+            const price = new Intl.NumberFormat('ru-RU').format(s.price) + ' ₽';
             const card = document.createElement('div');
             card.className = 'card';
-            card.onclick = () => showDetail(service.id);
-            card.innerHTML = `
-                <img src="${service.img}" class="card-img" alt="${service.title}">
-                <div class="card-content">
-                    <div class="card-title">[${service.title}]</div>
-                    <div class="card-price">${formattedPrice}</div>
-                </div>
-            `;
-            catalogContainer.appendChild(card);
+            card.onclick = () => showDetail(s);
+            card.innerHTML = `<img src="${s.img}" class="card-img"><div class="card-content"><div class="card-title">[${s.title}]</div><div class="card-price">${price}</div></div>`;
+            container.appendChild(card);
         });
 
-        // Показать детали
-        function showDetail(id) {
-            const service = services.find(s => s.id === id);
-            if (!service) return;
+        function showDetail(service) {
+            currentServiceId = service.id;
+            currentServiceTitle = service.title;
+            currentServicePrice = service.price;
 
             document.getElementById('d-image').src = service.img;
             document.getElementById('d-title').innerText = service.title;
             document.getElementById('d-price').innerText = new Intl.NumberFormat('ru-RU').format(service.price) + ' ₽';
             document.getElementById('d-desc').innerText = service.full;
 
-            document.getElementById('d-buy-btn').onclick = () => buyService(service.id, service.title, service.price);
-
             document.getElementById('catalog-screen').classList.remove('active');
             document.getElementById('detail-screen').classList.add('active');
-            window.scrollTo(0, 0);
         }
 
         function showCatalog() {
@@ -289,23 +180,39 @@
             document.getElementById('catalog-screen').classList.add('active');
         }
 
-        // Оплата
-        function buyService(id, title, price) {
-            tg.sendData(JSON.stringify({
-                action: "buy",
-                service_id: id,
-                title: title,
-                price: price
-            }));
-            tg.close(); // <--- ЗАКРЫВАЕМ ОКНО ДЛЯ ОТПРАВКИ ДАННЫХ
+        function buyCurrent() {
+            tg.sendData(JSON.stringify({ action: "buy", service_id: currentServiceId, title: currentServiceTitle, price: currentServicePrice }));
+            tg.close(); // Для оплаты закрываем окно, чтобы бот выставил счет
         }
 
-        // Связаться с менеджером
-        function contactManager() {
-            tg.sendData(JSON.stringify({
-                action: "support"
-            }));
-            tg.close(); // <--- ЗАКРЫВАЕМ ОКНО ДЛЯ ОТПРАВКИ ДАННЫХ
+        // --- ЛОГИКА ЧАТА ---
+        function openChat() {
+            document.getElementById('detail-screen').classList.remove('active');
+            document.getElementById('chat-screen').classList.add('active');
+        }
+
+        function closeChat() {
+            document.getElementById('chat-screen').classList.remove('active');
+            document.getElementById('catalog-screen').classList.add('active');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Показываем сообщение клиента в интерфейсе
+            const messagesContainer = document.getElementById('chat-messages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg user';
+            userMsg.innerText = text;
+            messagesContainer.appendChild(userMsg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Отправляем боту через MainButton (не закрывая окно)
+            tg.sendData(JSON.stringify({ action: "chat_msg", text: text }));
+            
+            input.value = "";
         }
     </script>
 </body>
