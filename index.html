@@ -14,6 +14,7 @@
             --text-dim: #007a1f;
             --border-color: #00ff41;
             --card-bg: #0a0a0a;
+            --header-bg: #111111;
         }
 
         body {
@@ -21,53 +22,81 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 16px;
+            padding: 0; /* Убрали отступы для шапки */
             background-image: 
                 linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
             background-size: 20px 20px;
         }
 
+        /* --- ШАПКА КОМПАНИИ --- */
+        .company-header {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--text-dim);
+            padding: 15px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .company-logo {
+            width: 40px; height: 40px;
+            background: var(--bg-color);
+            border: 1px solid var(--text-color);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 16px;
+            box-shadow: 0 0 10px rgba(0,255,65,0.3);
+        }
+        .company-info h2 { margin: 0; font-size: 16px; color: #fff; text-shadow: 0 0 5px var(--text-color); text-transform: uppercase; }
+        .company-info p { margin: 2px 0 0; font-size: 10px; color: var(--text-dim); }
+
+        /* --- ОСНОВНОЙ КОНТЕНТ --- */
+        .content { padding: 16px; }
+
         /* Экраны */
         .screen { display: none; }
         .screen.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Заголовок */
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed var(--text-dim); padding-bottom: 10px; }
-        h1 { font-size: 20px; margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px var(--text-color); }
-        p.subtitle { color: var(--text-dim); font-size: 12px; margin-top: 5px; }
+        /* Заголовок раздела */
+        .section-title { 
+            text-align: center; margin-bottom: 15px; 
+            font-size: 14px; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
 
-        /* Карточки в каталоге */
+        /* --- СЕТКА КАТАЛОГА (2 КОЛОНКИ) --- */
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 колонки */
+            gap: 10px;
+        }
+
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--text-dim);
-            border-left: 4px solid var(--text-color);
-            margin-bottom: 16px;
+            border-top: 3px solid var(--text-color);
             position: relative;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
         .card:hover { box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); border-color: var(--text-color); transform: scale(1.02); }
         
-        /* Картинка в карточке */
-        .card-img {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-            opacity: 0.7;
-            border-bottom: 1px solid var(--text-dim);
-            transition: 0.3s;
-        }
+        .card-img { width: 100%; height: 80px; object-fit: cover; opacity: 0.7; border-bottom: 1px solid var(--text-dim); transition: 0.3s; }
         .card:hover .card-img { opacity: 1; }
 
-        .card-content { padding: 12px; }
-        .card-title { font-weight: 600; font-size: 16px; color: #ffffff; text-shadow: 0 0 5px var(--text-color); }
-        .card-desc { font-size: 12px; color: var(--text-dim); margin: 6px 0; }
-        .card-price { font-size: 18px; font-weight: bold; color: var(--text-color); margin-top: 8px; }
+        .card-content { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-title { font-weight: 600; font-size: 13px; color: #ffffff; text-shadow: 0 0 5px var(--text-color); word-wrap: break-word; }
+        .card-price { font-size: 14px; font-weight: bold; color: var(--text-color); margin-top: auto; padding-top: 8px; }
 
-        /* Экран деталей */
+        /* --- ЭКРАН ДЕТАЛЕЙ --- */
         .back-btn {
             background: transparent; border: none; color: var(--text-dim); 
             font-family: inherit; font-size: 14px; cursor: pointer; 
@@ -75,16 +104,18 @@
         }
         .back-btn:hover { color: var(--text-color); text-shadow: 0 0 5px var(--text-color); }
 
-        .detail-img { width: 100%; height: 200px; object-fit: cover; border: 1px solid var(--text-dim); box-shadow: 0 0 10px rgba(0,255,65,0.1); }
-        .detail-title { font-size: 22px; margin: 15px 0 5px; color: #fff; text-shadow: 0 0 10px var(--text-color); }
+        .detail-img { width: 100%; height: 180px; object-fit: cover; border: 1px solid var(--text-dim); box-shadow: 0 0 10px rgba(0,255,65,0.1); }
+        .detail-title { font-size: 20px; margin: 15px 0 5px; color: #fff; text-shadow: 0 0 10px var(--text-color); }
         .detail-price { font-size: 24px; color: var(--text-color); margin-bottom: 15px; font-weight: bold; }
-        .detail-desc { font-size: 14px; color: #ccc; line-height: 1.5; margin-bottom: 20px; }
+        .detail-desc { font-size: 13px; color: #ccc; line-height: 1.5; margin-bottom: 20px; }
 
-        /* Кнопка покупки */
+        /* Кнопки */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        
         button.buy {
             background-color: transparent; color: var(--text-color);
             border: 1px solid var(--text-color); padding: 14px;
-            font-size: 16px; font-family: inherit; font-weight: 600;
+            font-size: 15px; font-family: inherit; font-weight: 600;
             cursor: pointer; width: 100%; text-transform: uppercase;
             box-shadow: inset 0 0 0 0 var(--text-color); transition: 0.2s;
         }
@@ -92,27 +123,49 @@
             background-color: var(--text-color); color: var(--bg-color);
             box-shadow: 0 0 15px var(--text-color);
         }
+
+        button.support {
+            background-color: transparent; color: #fff;
+            border: 1px dashed #555; padding: 14px;
+            font-size: 14px; font-family: inherit;
+            cursor: pointer; width: 100%; transition: 0.2s;
+        }
+        button.support:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
-    <!-- ЭКРАН 1: КАТАЛОГ -->
-    <div id="catalog-screen" class="screen active">
-        <div class="header">
-            <h1>SECURITY CYBER CENTER</h1>
-            <p class="subtitle">// [ ДОСТУП РАЗРЕШЕН ] ВЫБЕРИТЕ ПРОТОКОЛ</p>
+    <!-- ШАПКА КОМПАНИИ -->
+    <header class="company-header">
+        <div class="company-logo">SCC</div>
+        <div class="company-info">
+            <h2>Security Cyber Center</h2>
+            <p>Защита вашего бизнеса</p>
         </div>
-        <div id="services-container"></div>
-    </div>
+    </header>
 
-    <!-- ЭКРАН 2: ДЕТАЛИ УСЛУГИ -->
-    <div id="detail-screen" class="screen">
-        <button class="back-btn" onclick="showCatalog()">← Вернуться в каталог</button>
-        <img id="d-image" class="detail-img" src="" alt="Услуга">
-        <h2 id="d-title" class="detail-title"></h2>
-        <div id="d-price" class="detail-price"></div>
-        <div id="d-desc" class="detail-desc"></div>
-        <button id="d-buy-btn" class="buy">Запустить протокол оплаты</button>
+    <div class="content">
+        <!-- ЭКРАН 1: КАТАЛОГ -->
+        <div id="catalog-screen" class="screen active">
+            <div class="section-title">// Выберите протокол //</div>
+            <div class="catalog-grid" id="services-container">
+                <!-- Карточки генерируются JS -->
+            </div>
+        </div>
+
+        <!-- ЭКРАН 2: ДЕТАЛИ УСЛУГИ -->
+        <div id="detail-screen" class="screen">
+            <button class="back-btn" onclick="showCatalog()">← Вернуться в каталог</button>
+            <img id="d-image" class="detail-img" src="" alt="Услуга">
+            <h2 id="d-title" class="detail-title"></h2>
+            <div id="d-price" class="detail-price"></div>
+            <div id="d-desc" class="detail-desc"></div>
+            
+            <div class="btn-group">
+                <button id="d-buy-btn" class="buy">Выполнить (Оплатить)</button>
+                <button class="support" onclick="contactManager()">💬 Задать вопрос менеджеру</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -120,30 +173,29 @@
         tg.expand();
         tg.setHeaderColor('#050505');
 
-        // Данные услуг (добавили ссылки на картинки и подробное описание)
         const services = [
             { 
-                id: "audit", title: "AUDIT_IB", short: "Проверка инфраструктуры", price: 50000,
+                id: "audit", title: "AUDIT_IB", price: 50000,
                 img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop",
                 full: "Глубокий аудит вашей инфраструктуры. Выявление уязвимостей, анализ конфигураций серверов и сетей. Вы получаете подробный отчет с оценкой рисков и рекомендациями по устранению."
             },
             { 
-                id: "pentest", title: "PENTEST_WEB", short: "Поиск уязвимостей, PoC", price: 100000,
+                id: "pentest", title: "PENTEST_WEB", price: 100000,
                 img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop",
                 full: "Тестирование на проникновение (Black/White box). Наши этичные хакеры попытаются взломать ваш сайт или приложение. В конце вы получите отчет со всеми найденными дырами и PoC-эксплойтами."
             },
             { 
-                id: "soc", title: "SOC_MONITORING", short: "Мониторинг 24/7", price: 150000,
+                id: "soc", title: "SOC_MONITOR", price: 150000,
                 img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
                 full: "Подключение к нашему Security Operations Center. Круглосуточный мониторинг ваших систем, обнаружение вторжений в реальном времени и мгновенное реагирование на инциденты."
             },
             { 
-                id: "aware", title: "EDU_PHISHING", short: "Курс по фишингу", price: 30000,
+                id: "aware", title: "EDU_PHISH", price: 30000,
                 img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=800&auto=format&fit=crop",
                 full: "Обучение сотрудников основам кибергигиены. Мы проведем легальную рассылку фишинговых писем, чтобы проверить бдительность, а затем обучим персонал, как не попадаться на уловки хакеров."
             },
             { 
-                id: "comply", title: "COMPLY_152FZ", short: "Аудит 152-ФЗ", price: 70000,
+                id: "comply", title: "COMPLY_152FZ", price: 70000,
                 img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
                 full: "Проверка вашей компании на соответствие Федеральному закону №152 «О персональных данных». Поможем избежать штрафов и подготовить документы к проверкам Роскомнадзора."
             }
@@ -151,7 +203,7 @@
 
         const catalogContainer = document.getElementById('services-container');
 
-        // Отрисовка каталога
+        // Отрисовка каталога (плиткой)
         services.forEach(service => {
             const formattedPrice = new Intl.NumberFormat('ru-RU').format(service.price) + ' ₽';
             const card = document.createElement('div');
@@ -161,14 +213,13 @@
                 <img src="${service.img}" class="card-img" alt="${service.title}">
                 <div class="card-content">
                     <div class="card-title">[${service.title}]</div>
-                    <div class="card-desc">${service.short}</div>
                     <div class="card-price">${formattedPrice}</div>
                 </div>
             `;
             catalogContainer.appendChild(card);
         });
 
-        // Показать детали услуги
+        // Показать детали
         function showDetail(id) {
             const service = services.find(s => s.id === id);
             if (!service) return;
@@ -178,29 +229,32 @@
             document.getElementById('d-price').innerText = new Intl.NumberFormat('ru-RU').format(service.price) + ' ₽';
             document.getElementById('d-desc').innerText = service.full;
 
-            // Настраиваем кнопку покупки
-            const buyBtn = document.getElementById('d-buy-btn');
-            buyBtn.onclick = () => buyService(service.id, service.title, service.price);
+            document.getElementById('d-buy-btn').onclick = () => buyService(service.id, service.title, service.price);
 
-            // Переключаем экраны
             document.getElementById('catalog-screen').classList.remove('active');
             document.getElementById('detail-screen').classList.add('active');
-            window.scrollTo(0, 0); // Скролл наверх
+            window.scrollTo(0, 0);
         }
 
-        // Вернуться в каталог
         function showCatalog() {
             document.getElementById('detail-screen').classList.remove('active');
             document.getElementById('catalog-screen').classList.add('active');
         }
 
-        // Отправка данных в бота
+        // Оплата
         function buyService(id, title, price) {
             tg.sendData(JSON.stringify({
                 action: "buy",
                 service_id: id,
                 title: title,
                 price: price
+            }));
+        }
+
+        // Связаться с менеджером
+        function contactManager() {
+            tg.sendData(JSON.stringify({
+                action: "support"
             }));
         }
     </script>
