@@ -209,8 +209,19 @@
             document.getElementById('catalog-screen').classList.add('active');
         }
 
-        function selectTopic(topic) {
+        // ВАЖНО: принудительно открываем тикет на сервере перед входом
+        async function selectTopic(topic) {
             document.getElementById('topic-screen').style.display = 'none';
+            const userId = tg.initDataUnsafe?.user?.id;
+            if (userId) {
+                try {
+                    await fetch(`${API_URL}/api/reopen`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: userId, topic: topic })
+                    });
+                } catch(e) { console.error(e); }
+            }
             openChat(topic);
         }
 
@@ -268,7 +279,6 @@
                 const userId = tg.initDataUnsafe?.user?.id;
                 if (!userId) return;
 
-                // Проверяем статус заявки (открыта/закрыта)
                 const statusRes = await fetch(`${API_URL}/api/status?user_id=${userId}`);
                 const statusData = await statusRes.json();
                 
@@ -292,7 +302,6 @@
                         const div = document.createElement('div');
                         div.className = `msg ${m.is_admin ? 'admin' : 'user'}`;
                         
-                        // Обработка разных типов сообщений
                         if (m.text.startsWith("data:image")) {
                             const img = document.createElement('img');
                             img.src = m.text;
@@ -347,7 +356,6 @@
             } catch (e) { console.error(e); }
         }
 
-        // === ОТПРАВКА ФОТО ===
         function handleImageUpload(event) {
             const file = event.target.files[0];
             const userId = tg.initDataUnsafe?.user?.id;
@@ -361,7 +369,6 @@
             event.target.value = ''; 
         }
 
-        // === ЗАПИСЬ ГОЛОСА ===
         async function toggleVoiceRecord() {
             const micBtn = document.getElementById('mic-btn');
             const userId = tg.initDataUnsafe?.user?.id;
