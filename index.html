@@ -67,6 +67,12 @@
         .main-support-btn { display: block; text-align: center; text-decoration: none; border: 1px dashed var(--text-color); color: var(--text-color); padding: 15px; font-weight: 600; margin-top: 10px; transition: 0.2s; }
         .main-support-btn:hover { background: rgba(0, 255, 65, 0.1); box-shadow: 0 0 10px var(--text-dim); }
 
+        /* Экран выбора темы */
+        #topic-screen { background: var(--bg-color); z-index: 150; position: fixed; top: 0; left: 0; right: 0; bottom: 0; padding: 20px; display: none; }
+        .topic-title { text-align: center; color: #fff; margin-bottom: 20px; font-size: 16px; }
+        .topic-btn { text-align: left; padding: 15px; margin-bottom: 10px; border: 1px solid var(--text-dim); color: var(--text-color); background: var(--card-bg); }
+        .topic-btn:hover { border-color: var(--text-color); box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+
         #chat-screen { background: var(--bg-color); z-index: 200; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
         .chat-header-bar { padding: 10px 16px; border-bottom: 1px solid var(--text-dim); display: flex; justify-content: space-between; align-items: center; background: var(--header-bg); }
         .chat-header-bar span { color: #fff; font-size: 14px; }
@@ -104,7 +110,7 @@
                 </div>
             </div>
             <div class="catalog-grid" id="services-container"></div>
-            <div class="main-support-btn" onclick="openChat()">💬 Связаться с техподдержкой</div>
+            <div class="main-support-btn" onclick="showTopics()">💬 Связаться с техподдержкой</div>
         </div>
 
         <div id="detail-screen" class="screen">
@@ -114,22 +120,33 @@
             <div id="d-price" class="detail-price"></div>
             <div id="d-desc" class="detail-desc"></div>
             <button id="d-buy-btn" onclick="buyCurrent()">Выполнить (Оплатить)</button>
-            <button class="support" onclick="openChat()">💬 Чат с менеджером</button>
+            <button class="support" onclick="showTopics()">💬 Чат с менеджером</button>
         </div>
+    </div>
 
-        <div id="chat-screen" class="screen">
-            <div class="chat-header-bar">
-                <span>Чат с поддержкой</span>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-end-chat" onclick="endChat()">Завершить</button>
-                    <button class="btn-close-chat" onclick="closeChat()">Закрыть</button>
-                </div>
+    <!-- ЭКРАН ВЫБОРА ТЕМЫ -->
+    <div id="topic-screen" class="screen">
+        <div class="topic-title">Выберите тему обращения</div>
+        <button class="topic-btn" onclick="selectTopic('Вопрос по аудиту или пентесту')">🛡 Вопрос по аудиту/пентесту</button>
+        <button class="topic-btn" onclick="selectTopic('Проблемы с оплатой')">💳 Проблемы с оплатой</button>
+        <button class="topic-btn" onclick="selectTopic('Техническая поддержка / Сбой')">⚙️ Техническая поддержка</button>
+        <button class="topic-btn" onclick="selectTopic('Другое (общий вопрос)')">❓ Другое / Общий вопрос</button>
+        <button class="back-btn" style="margin-top: 20px;" onclick="closeTopics()">← Отмена</button>
+    </div>
+
+    <!-- ЭКРАН ЧАТА -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-header-bar">
+            <span>Чат с поддержкой</span>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-end-chat" onclick="endChat()">Завершить</button>
+                <button class="btn-close-chat" onclick="closeChat()">Закрыть</button>
             </div>
-            <div class="chat-messages" id="chat-messages"></div>
-            <div class="chat-input-area">
-                <input type="text" id="chat-input" placeholder="Введите сообщение...">
-                <button onclick="sendChatMessage()">➤</button>
-            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Введите сообщение...">
+            <button onclick="sendChatMessage()">➤</button>
         </div>
     </div>
 
@@ -138,9 +155,7 @@
         tg.expand();
         tg.setHeaderColor('#050505');
         
-        // Для теста на ПК
         const API_URL = 'http://localhost:8080'; 
-        // Если тестируешь с телефона, замени localhost на IP компа (например, 192.168.1.5)
 
         let currentServiceId = "";
         let currentServiceTitle = "";
@@ -190,17 +205,63 @@
             tg.close();
         }
 
-        // --- ЧАТ ---
-        function openChat() {
+        // --- ВЫБОР ТЕМЫ ---
+        function showTopics() {
             document.getElementById('catalog-screen').classList.remove('active');
             document.getElementById('detail-screen').classList.remove('active');
+            document.getElementById('topic-screen').style.display = 'block';
+        }
+
+        function closeTopics() {
+            document.getElementById('topic-screen').style.display = 'none';
+            document.getElementById('catalog-screen').classList.add('active');
+        }
+
+        function selectTopic(topic) {
+            document.getElementById('topic-screen').style.display = 'none';
+            openChat(topic);
+        }
+
+        // --- ЧАТ ---
+        function openChat(topic = null) {
             document.getElementById('chat-screen').classList.add('active');
-            
             const container = document.getElementById('chat-messages');
             container.innerHTML = ''; 
             
             loadMessages();
+            
+            // Если выбрана тема, автоматически отправляем её как первое сообщение
+            if (topic) {
+                sendTopicToServer(topic);
+            }
+
             chatInterval = setInterval(loadMessages, 2000); 
+        }
+
+        async function sendTopicToServer(topic) {
+            const userId = tg.initDataUnsafe?.user?.id;
+            if (!userId) return;
+            
+            const text = `[Тема обращения: ${topic}]`;
+            
+            // Мгновенно показываем клиенту
+            const container = document.getElementById('chat-messages');
+            const tempMsg = document.createElement('div');
+            tempMsg.className = 'msg user';
+            tempMsg.innerText = text;
+            container.appendChild(tempMsg);
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                await fetch(`${API_URL}/api/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, text: text })
+                });
+                loadMessages();
+            } catch (e) {
+                console.error("Ошибка отправки темы", e);
+            }
         }
 
         function closeChat() {
@@ -221,7 +282,7 @@
                         body: JSON.stringify({ user_id: userId })
                     });
                     document.getElementById('chat-messages').innerHTML = '';
-                    openChat(); 
+                    closeChat();
                 } catch (e) {
                     console.error("Ошибка завершения", e);
                 }
@@ -266,7 +327,6 @@
             if (!text || !userId) return;
             input.value = "";
 
-            // 1. Мгновенно показываем сообщение клиента (чтобы не ждать 2 секунды)
             const container = document.getElementById('chat-messages');
             const tempMsg = document.createElement('div');
             tempMsg.className = 'msg user';
@@ -275,14 +335,11 @@
             container.scrollTop = container.scrollHeight;
 
             try {
-                // 2. Отправляем на сервер
                 await fetch(`${API_URL}/api/send`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, text: text })
                 });
-                
-                // 3. Сразу подгружаем новые сообщения (включая автоответ)
                 loadMessages();
             } catch (e) {
                 console.error("Ошибка отправки", e);
