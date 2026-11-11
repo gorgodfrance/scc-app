@@ -10,7 +10,7 @@
 
         :root {
             --bg-color: #050505;
-            --text-color: #00ff41; /* Матричный зеленый */
+            --text-color: #00ff41;
             --text-dim: #007a1f;
             --border-color: #00ff41;
             --card-bg: #0a0a0a;
@@ -22,7 +22,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 0; /* Убрали отступы для шапки */
+            padding: 0;
             background-image: 
                 linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
@@ -54,7 +54,6 @@
         .company-info h2 { margin: 0; font-size: 16px; color: #fff; text-shadow: 0 0 5px var(--text-color); text-transform: uppercase; }
         .company-info p { margin: 2px 0 0; font-size: 10px; color: var(--text-dim); }
 
-        /* --- ОСНОВНОЙ КОНТЕНТ --- */
         .content { padding: 16px; }
 
         /* Экраны */
@@ -62,17 +61,40 @@
         .screen.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Заголовок раздела */
+        /* --- БАННЕР НА ГЛАВНОЙ --- */
+        .hero-section {
+            position: relative;
+            border: 1px solid var(--text-dim);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0,255,65,0.1);
+        }
+        .hero-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+        .hero-text {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        }
+        .hero-text h3 { margin: 0; font-size: 16px; color: var(--text-color); text-transform: uppercase; }
+        .hero-text p { margin: 5px 0 0; font-size: 11px; color: #ccc; line-height: 1.4; }
+
         .section-title { 
             text-align: center; margin-bottom: 15px; 
             font-size: 14px; color: var(--text-dim);
             text-transform: uppercase; letter-spacing: 1px;
         }
 
-        /* --- СЕТКА КАТАЛОГА (2 КОЛОНКИ) --- */
+        /* --- СЕТКА КАТАЛОГА --- */
         .catalog-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 колонки */
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
 
@@ -93,7 +115,7 @@
         .card:hover .card-img { opacity: 1; }
 
         .card-content { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
-        .card-title { font-weight: 600; font-size: 13px; color: #ffffff; text-shadow: 0 0 5px var(--text-color); word-wrap: break-word; }
+        .card-title { font-weight: 600; font-size: 12px; color: #ffffff; text-shadow: 0 0 5px var(--text-color); word-wrap: break-word; }
         .card-price { font-size: 14px; font-weight: bold; color: var(--text-color); margin-top: auto; padding-top: 8px; }
 
         /* --- ЭКРАН ДЕТАЛЕЙ --- */
@@ -135,7 +157,7 @@
 </head>
 <body>
 
-    <!-- ШАПКА КОМПАНИИ -->
+    <!-- ШАПКА -->
     <header class="company-header">
         <div class="company-logo">SCC</div>
         <div class="company-info">
@@ -145,8 +167,18 @@
     </header>
 
     <div class="content">
-        <!-- ЭКРАН 1: КАТАЛОГ -->
+        <!-- ЭКРАН 1: ГЛАВНАЯ -->
         <div id="catalog-screen" class="screen active">
+            
+            <!-- БАННЕР КОМПАНИИ -->
+            <div class="hero-section">
+                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" class="hero-img" alt="SCC">
+                <div class="hero-text">
+                    <h3>О компании</h3>
+                    <p>SCC — это команда этичных хакеров и экспертов по кибербезопасности. Мы защищаем бизнес от цифровых угроз, проводим аудиты, тестируем на проникновение и обучаем сотрудников.</p>
+                </div>
+            </div>
+
             <div class="section-title">// Выберите протокол //</div>
             <div class="catalog-grid" id="services-container">
                 <!-- Карточки генерируются JS -->
@@ -173,6 +205,7 @@
         tg.expand();
         tg.setHeaderColor('#050505');
 
+        // 8 услуг
         const services = [
             { 
                 id: "audit", title: "AUDIT_IB", price: 50000,
@@ -198,12 +231,28 @@
                 id: "comply", title: "COMPLY_152FZ", price: 70000,
                 img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
                 full: "Проверка вашей компании на соответствие Федеральному закону №152 «О персональных данных». Поможем избежать штрафов и подготовить документы к проверкам Роскомнадзора."
+            },
+            // --- НОВЫЕ 3 УСЛУГИ ---
+            { 
+                id: "redteam", title: "RED_TEAM", price: 200000,
+                img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800&auto=format&fit=crop",
+                full: "Имитация действий реальных хакеров (Red Teaming). Мы используем продвинутые методы социальной инженерии и кибератаки, чтобы проверить, как ваши системы и персонал противостоят целеустремленному противнику."
+            },
+            { 
+                id: "codeaudit", title: "CODE_AUDIT", price: 80000,
+                img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+                full: "Статический и динамический анализ исходного кода (SAST/DAST). Поиск уязвимостей на этапе разработки (SQL-инъекции, XSS, логические ошибки). Идеально для стартапов и продуктовых команд."
+            },
+            { 
+                id: "forensics", title: "CYBER_FORENSICS", price: 120000,
+                img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=800&auto=format&fit=crop",
+                full: "Компьютерная криминалистика. Если взлом уже произошел, мы оперативно соберем цифровые доказательства, выясним, как злоумышленник попал в систему, и поможем минимизировать ущерб."
             }
         ];
 
         const catalogContainer = document.getElementById('services-container');
 
-        // Отрисовка каталога (плиткой)
+        // Рендер карточек
         services.forEach(service => {
             const formattedPrice = new Intl.NumberFormat('ru-RU').format(service.price) + ' ₽';
             const card = document.createElement('div');
@@ -251,7 +300,7 @@
             }));
         }
 
-        // Связаться с менеджером
+        // Связаться с менеджером (Передает команду боту включить режим чата)
         function contactManager() {
             tg.sendData(JSON.stringify({
                 action: "support"
