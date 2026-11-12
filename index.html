@@ -38,13 +38,21 @@
         button:hover { background: var(--text-color); color: var(--bg-color); box-shadow: 0 0 15px var(--text-color); }
         button.support { border: 1px dashed #555; color: #fff; text-transform: none; }
         button.support:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
-        .main-support-btn { display: block; text-align: center; text-decoration: none; border: 1px dashed var(--text-color); color: var(--text-color); padding: 15px; font-weight: 600; margin-top: 10px; transition: 0.2s; }
-        .main-support-btn:hover { background: rgba(0, 255, 65, 0.1); box-shadow: 0 0 10px var(--text-dim); }
         
+        .main-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .main-btn { display: block; text-align: center; text-decoration: none; border: 1px dashed var(--text-color); color: var(--text-color); padding: 15px; font-weight: 600; transition: 0.2s; background: transparent; font-family: inherit; font-size: 14px; cursor: pointer; }
+        .main-btn:hover { background: rgba(0, 255, 65, 0.1); box-shadow: 0 0 10px var(--text-dim); }
+
         #topic-screen { background: var(--bg-color); z-index: 150; position: fixed; top: 0; left: 0; right: 0; bottom: 0; padding: 20px; display: none; }
         .topic-title { text-align: center; color: #fff; margin-bottom: 20px; font-size: 16px; }
         .topic-btn { text-align: left; padding: 15px; margin-bottom: 10px; border: 1px solid var(--text-dim); color: var(--text-color); background: var(--card-bg); }
         .topic-btn:hover { border-color: var(--text-color); box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+
+        #orders-screen { background: var(--bg-color); z-index: 150; position: fixed; top: 0; left: 0; right: 0; bottom: 0; padding: 20px; display: none; overflow-y: auto; }
+        .order-card { background: var(--card-bg); border: 1px solid var(--text-dim); padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .order-title { font-size: 14px; color: #fff; font-weight: 600; }
+        .order-date { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .order-price { font-size: 16px; color: var(--text-color); font-weight: bold; }
 
         #chat-screen { background: var(--bg-color); z-index: 200; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
         .chat-header-bar { padding: 10px 16px; border-bottom: 1px solid var(--text-dim); display: flex; justify-content: space-between; align-items: center; background: var(--header-bg); }
@@ -55,17 +63,7 @@
         .msg.user { align-self: flex-end; background: rgba(0, 255, 65, 0.1); border: 1px solid var(--text-dim); color: #fff; }
         .msg.admin { align-self: flex-start; background: var(--header-bg); border: 1px solid #333; color: var(--text-color); }
         .msg img { max-width: 100%; border-radius: 4px; margin-top: 5px; display: block; }
-        
-        /* Жестко фиксируем размеры и вид аудио-плеера */
-        .msg audio { 
-            width: 100%; 
-            min-width: 250px;
-            height: 40px; 
-            margin-top: 5px; 
-            outline: none; 
-            border-radius: 4px; 
-            display: block;
-        }
+        .msg audio { width: 100%; min-width: 250px; height: 40px; margin-top: 5px; outline: none; border-radius: 4px; display: block; }
 
         .chat-action-area { padding: 10px; background: var(--header-bg); border-top: 1px solid var(--text-dim); display: flex; flex-direction: column; gap: 10px; }
         .chat-input-row { display: flex; gap: 10px; align-items: center; }
@@ -99,7 +97,11 @@
                 <div class="hero-text"><h3>О компании</h3><p>Команда этичных хакеров и экспертов по кибербезопасности.</p></div>
             </div>
             <div class="catalog-grid" id="services-container"></div>
-            <div class="main-support-btn" onclick="showTopics()">💬 Связаться с техподдержкой</div>
+            
+            <div class="main-btn-group">
+                <button class="main-btn" onclick="showTopics()">💬 Связаться с техподдержкой</button>
+                <button class="main-btn" onclick="showOrders()">📄 Мои заказы</button>
+            </div>
         </div>
 
         <div id="detail-screen" class="screen">
@@ -111,6 +113,13 @@
             <button id="d-buy-btn" onclick="buyCurrent()">Выполнить (Оплатить)</button>
             <button class="support" onclick="showTopics()">💬 Чат с менеджером</button>
         </div>
+    </div>
+
+    <!-- ЭКРАН МОИХ ЗАКАЗОВ -->
+    <div id="orders-screen" class="screen">
+        <button class="back-btn" onclick="closeOrders()">← Назад</button>
+        <h2 style="color: #fff; text-align: center; margin-bottom: 20px;">Мои заказы</h2>
+        <div id="orders-container"></div>
     </div>
 
     <div id="topic-screen" class="screen">
@@ -208,6 +217,51 @@
             tg.close();
         }
 
+        // === ЭКРАН ЗАКАЗОВ ===
+        async function showOrders() {
+            document.getElementById('catalog-screen').classList.remove('active');
+            document.getElementById('orders-screen').style.display = 'block';
+            
+            const container = document.getElementById('orders-container');
+            container.innerHTML = '<div style="text-align:center; color: var(--text-dim);">Загрузка...</div>';
+            
+            const userId = tg.initDataUnsafe?.user?.id;
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/orders?user_id=${userId}`);
+                const orders = await response.json();
+                
+                container.innerHTML = '';
+                if (orders.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color: var(--text-dim); margin-top:20px;">У вас пока нет заказов.</div>';
+                } else {
+                    orders.forEach(o => {
+                        const div = document.createElement('div');
+                        div.className = 'order-card';
+                        const price = new Intl.NumberFormat('ru-RU').format(o.amount / 100) + ' ₽';
+                        const date = o.created.substring(0, 10);
+                        div.innerHTML = `
+                            <div>
+                                <div class="order-title">${o.service}</div>
+                                <div class="order-date">${date}</div>
+                            </div>
+                            <div class="order-price">${price}</div>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            } catch (e) {
+                container.innerHTML = '<div style="text-align:center; color: #ff3333;">Ошибка загрузки заказов.</div>';
+            }
+        }
+
+        function closeOrders() {
+            document.getElementById('orders-screen').style.display = 'none';
+            document.getElementById('catalog-screen').classList.add('active');
+        }
+
+        // === ЧАТ И ПОДДЕРЖКА ===
         function showTopics() {
             document.getElementById('chat-screen').classList.remove('active');
             document.getElementById('catalog-screen').classList.remove('active');
@@ -300,8 +354,6 @@
                 const response = await fetch(`${API_URL}/api/messages?user_id=${userId}`);
                 const messages = await response.json();
                 const container = document.getElementById('chat-messages');
-                
-                // Очищаем контейнер, но сохраняем позицию скролла
                 container.innerHTML = '';
 
                 if (messages.length === 0) {
@@ -319,15 +371,12 @@
                             img.src = m.text;
                             div.appendChild(img);
                         } else if (m.text.startsWith("data:audio")) {
-                            // Правильная вставка аудио
                             const audio = document.createElement('audio');
                             audio.controls = true;
                             audio.preload = "metadata";
-                            
                             const source = document.createElement('source');
                             source.src = m.text;
-                            source.type = "audio/webm; codecs=opus"; // Указываем кодек
-                            
+                            source.type = "audio/webm; codecs=opus";
                             audio.appendChild(source);
                             div.appendChild(audio);
                         } else {
@@ -336,7 +385,6 @@
                         container.appendChild(div);
                     });
                 }
-                // Скролл вниз только если пользователь не читает историю
                 container.scrollTop = container.scrollHeight;
             } catch (e) { console.error(e); }
         }
@@ -357,7 +405,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, text: text })
                 });
-                // После отправки сразу перезагружаем историю
                 loadMessages();
             } catch (e) { console.error(e); }
         }
@@ -383,7 +430,6 @@
             if (!isRecording) {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    // Принудительно используем webm, так как он поддерживается везде
                     mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
                     audioChunks = [];
 
@@ -404,7 +450,7 @@
                     isRecording = true;
                     micBtn.classList.add('btn-recording');
                 } catch (err) {
-                    alert("Не удалось получить доступ к микрофону. Проверьте разрешения.");
+                    alert("Не удалось получить доступ к микрофону.");
                 }
             } else {
                 mediaRecorder.stop();
