@@ -56,10 +56,16 @@
         .msg.admin { align-self: flex-start; background: var(--header-bg); border: 1px solid #333; color: var(--text-color); }
         .msg img { max-width: 100%; border-radius: 4px; margin-top: 5px; display: block; }
         
-        /* Стили для аудио-плеера */
-        .msg audio { width: 100%; margin-top: 5px; display: block; height: 40px; outline: none; border-radius: 4px; background-color: transparent; }
-        .msg audio::-webkit-media-controls-panel { background-color: var(--header-bg); }
-        .msg audio::-webkit-media-controls-play-button { background-color: var(--text-color); border-radius: 50%; }
+        /* Жестко фиксируем размеры и вид аудио-плеера */
+        .msg audio { 
+            width: 100%; 
+            min-width: 250px;
+            height: 40px; 
+            margin-top: 5px; 
+            outline: none; 
+            border-radius: 4px; 
+            display: block;
+        }
 
         .chat-action-area { padding: 10px; background: var(--header-bg); border-top: 1px solid var(--text-dim); display: flex; flex-direction: column; gap: 10px; }
         .chat-input-row { display: flex; gap: 10px; align-items: center; }
@@ -313,11 +319,16 @@
                             img.src = m.text;
                             div.appendChild(img);
                         } else if (m.text.startsWith("data:audio")) {
+                            // Правильная вставка аудио
                             const audio = document.createElement('audio');
                             audio.controls = true;
-                            audio.src = m.text;
-                            // Принудительно задаем тип для совместимости
-                            audio.type = "audio/webm"; 
+                            audio.preload = "metadata";
+                            
+                            const source = document.createElement('source');
+                            source.src = m.text;
+                            source.type = "audio/webm; codecs=opus"; // Указываем кодек
+                            
+                            audio.appendChild(source);
                             div.appendChild(audio);
                         } else {
                             div.innerText = m.text;
