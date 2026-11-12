@@ -115,7 +115,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН МОИХ ЗАКАЗОВ -->
     <div id="orders-screen" class="screen">
         <button class="back-btn" onclick="closeOrders()">← Назад</button>
         <h2 style="color: #fff; text-align: center; margin-bottom: 20px;">Мои заказы</h2>
@@ -212,18 +211,37 @@
             document.getElementById('catalog-screen').classList.add('active');
         }
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ ОПЛАТЫ С ЗАДЕРЖКОЙ
-        function buyCurrent() {
-            tg.sendData(JSON.stringify({ 
-                action: "buy", 
-                service_id: currentServiceId, 
-                title: currentServiceTitle, 
-                price: currentServicePrice 
-            }));
-            // Ждем 500 мс, чтобы Telegram точно передал данные
-            setTimeout(() => { 
-                tg.close(); 
-            }, 500);
+        // === ОБНОВЛЕННАЯ ФУНКЦИЯ ОПЛАТЫ ЧЕРЕЗ API ===
+        async function buyCurrent() {
+            const userId = tg.initDataUnsafe?.user?.id;
+            if (!userId) {
+                alert("Ошибка: не удалось определить ваш ID.");
+                return;
+            }
+
+            try {
+                // Отправляем запрос на наш сервер (порт 8080)
+                const response = await fetch(`${API_URL}/api/buy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        user_id: userId,
+                        service_id: currentServiceId, 
+                        title: currentServiceTitle, 
+                        price: currentServicePrice 
+                    })
+                });
+
+                if (response.ok) {
+                    // Если сервер принял заказ, закрываем Mini App
+                    tg.close();
+                } else {
+                    alert("Ошибка сервера при создании заказа.");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Ошибка сети. Проверьте соединение.");
+            }
         }
 
         // === ЭКРАН ЗАКАЗОВ ===
