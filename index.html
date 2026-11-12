@@ -110,7 +110,8 @@
             <h2 id="d-title" class="detail-title"></h2>
             <div id="d-price" class="detail-price"></div>
             <div id="d-desc" class="detail-desc"></div>
-            <button id="d-buy-btn" onclick="buyCurrent()">Выполнить (Оплатить)</button>
+            <!-- ОБНОВЛЕННАЯ КНОПКА -->
+            <button id="d-buy-btn" onclick="buyCurrent()">СДЕЛАТЬ ЗАКАЗ</button>
             <button class="support" onclick="showTopics()">💬 Чат с менеджером</button>
         </div>
     </div>
@@ -175,14 +176,14 @@
         let audioChunks = [];
 
         const services = [
-            { id: "audit", title: "AUDIT_IB", price: 50000, img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800", full: "Глубокий аудит инфраструктуры." },
-            { id: "pentest", title: "PENTEST_WEB", price: 100000, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800", full: "Тестирование на проникновение." },
-            { id: "soc", title: "SOC_MONITOR", price: 150000, img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800", full: "Мониторинг 24/7." },
-            { id: "aware", title: "EDU_PHISH", price: 30000, img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=800", full: "Обучение сотрудников." },
-            { id: "comply", title: "COMPLY_152FZ", price: 70000, img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800", full: "Аудит 152-ФЗ." },
-            { id: "redteam", title: "RED_TEAM", price: 200000, img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800", full: "Имитация атаки." },
-            { id: "codeaudit", title: "CODE_AUDIT", price: 80000, img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800", full: "Аудит кода." },
-            { id: "forensics", title: "FORENSICS", price: 120000, img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=800", full: "Криминалистика." }
+            { id: "audit", title: "AUDIT_IB", price: 5000, img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800", full: "Глубокий аудит инфраструктуры." },
+            { id: "pentest", title: "PENTEST_WEB", price: 10000, img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800", full: "Тестирование на проникновение." },
+            { id: "soc", title: "SOC_MONITOR", price: 15000, img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800", full: "Мониторинг 24/7." },
+            { id: "aware", title: "EDU_PHISH", price: 3000, img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=800", full: "Обучение сотрудников." },
+            { id: "comply", title: "COMPLY_152FZ", price: 7000, img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800", full: "Аудит 152-ФЗ." },
+            { id: "redteam", title: "RED_TEAM", price: 20000, img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800", full: "Имитация атаки." },
+            { id: "codeaudit", title: "CODE_AUDIT", price: 8000, img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800", full: "Аудит кода." },
+            { id: "forensics", title: "FORENSICS", price: 12000, img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=800", full: "Криминалистика." }
         ];
 
         const container = document.getElementById('services-container');
@@ -212,9 +213,15 @@
             document.getElementById('catalog-screen').classList.add('active');
         }
 
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ ОПЛАТЫ
         function buyCurrent() {
-            tg.sendData(JSON.stringify({ action: "buy", service_id: currentServiceId, title: currentServiceTitle, price: currentServicePrice }));
-            tg.close();
+            tg.sendData(JSON.stringify({ 
+                action: "buy", 
+                service_id: currentServiceId, 
+                title: currentServiceTitle, 
+                price: currentServicePrice 
+            }));
+            setTimeout(() => { tg.close(); }, 100);
         }
 
         // === ЭКРАН ЗАКАЗОВ ===
