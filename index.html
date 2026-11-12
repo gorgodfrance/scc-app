@@ -110,7 +110,6 @@
             <h2 id="d-title" class="detail-title"></h2>
             <div id="d-price" class="detail-price"></div>
             <div id="d-desc" class="detail-desc"></div>
-            <!-- ОБНОВЛЕННАЯ КНОПКА -->
             <button id="d-buy-btn" onclick="buyCurrent()">СДЕЛАТЬ ЗАКАЗ</button>
             <button class="support" onclick="showTopics()">💬 Чат с менеджером</button>
         </div>
@@ -213,7 +212,7 @@
             document.getElementById('catalog-screen').classList.add('active');
         }
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ ОПЛАТЫ
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ ОПЛАТЫ С ЗАДЕРЖКОЙ
         function buyCurrent() {
             tg.sendData(JSON.stringify({ 
                 action: "buy", 
@@ -221,7 +220,10 @@
                 title: currentServiceTitle, 
                 price: currentServicePrice 
             }));
-            setTimeout(() => { tg.close(); }, 100);
+            // Ждем 500 мс, чтобы Telegram точно передал данные
+            setTimeout(() => { 
+                tg.close(); 
+            }, 500);
         }
 
         // === ЭКРАН ЗАКАЗОВ ===
@@ -246,7 +248,7 @@
                     orders.forEach(o => {
                         const div = document.createElement('div');
                         div.className = 'order-card';
-                        const price = new Intl.NumberFormat('ru-RU').format(o.amount / 100) + ' ₽';
+                        const price = new Intl.NumberFormat('ru-RU').format(o.amount) + ' ₽';
                         const date = o.created.substring(0, 10);
                         div.innerHTML = `
                             <div>
